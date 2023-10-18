@@ -11,22 +11,48 @@ function generateOTP(){
         }
         return otp;
   }
-  function sendOTPOverEmail(){
-    var params = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        message: generateOTP(), 
+  function sendOTPOverEmail(name, email) {
+    const params = {
+      name: name,
+      email: email,
+      message: generateOTP(),
     };
     const serviceID = "service_dofkyxl";
     const templateID = "template_r8ilsbk";
   
-    emailjs.send(serviceID, templateID, params)
-    .then(res => {
-        document.getElementById("name").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("message").value = params.message; 
-        console.log(res);
-        alert("Your message sent successfully!!");
-    })
-    .catch(err => console.log(err));
-}
+    return emailjs.send(serviceID, templateID, params);
+  }
+  
+  function clearInputFields() {
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+  }
+  function displayMessage(message) {
+    document.getElementById("message").textContent = message;
+  }
+  function sendOTP() {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+  
+    if (name.trim() === "") {
+      displayMessage("Name is required.");
+    } else if (email.trim() === "") {
+      displayMessage("Email is required.");
+    } else if (!validateEmail(email)) {
+      displayMessage("Invalid email address.");
+    } else {
+      sendOTPOverEmail(name, email)
+        .then((res) => {
+          clearInputFields();
+          displayMessage("Your OTP has been sent successfully!");
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
+    }
+  }
+  
+  function validateEmail(email) {
+    // Add your email validation logic here
+    return true; // Replace with your validation logic
+  }
+  
